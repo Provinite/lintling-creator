@@ -1,0 +1,23 @@
+<!doctype html>
+<html>
+<head>
+	<title>Pillowing Stuff</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.2/angular.min.js"></script>
+	<script src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
+	<script src="./assets/js/app.js"></script>
+    <link rel="stylesheet" href="/assets/css/app.css" />
+</head>
+<body ng-app="lintling-christmas">
+	<div ng-controller="dollmaker">
+        <canvas id="canvas" width="613" height="570" style="float:left"></canvas>
+        <div ng-repeat="(part, pairList) in parts">
+            <select ng-change="partChange(part)" ng-model="selectedBits[part]">
+                <option value="">{{part|capitalize}}</option>
+                <option ng-repeat="pair in pairList" value="{{pair.url}}">{{pair.name}}</option>
+            </select>
+        </div>
+        <br />
+        <input type="button" ng-click="drawLintling()" value="Draw" />
+	</div>
+</body>
+</html>
