@@ -96,7 +96,17 @@ var dollMaker = function($scope, $http, $element, $q, ORIGIN_W, ORIGIN_H, IMAGE_
         console.log(parts);
     });
 
-    $scope.selectedBits = {base: "./assets/image/base/base.png", paws:"", eyes: "", teeth: "", tail: "", coat: "", ears: "", whiskers: ""};
+    $scope.selectedBits = {
+        watermark: "./assets/image/watermark/watermark.png", 
+        base: "./assets/image/base/base.png", 
+        paws:"", 
+        eyes: "", 
+        teeth: "", 
+        tail: "", 
+        coat: "", 
+        ears: "", 
+        whiskers: ""
+    };
 
     $scope.partChange = function(part) {
         console.log(part + ": " + $scope.selectedBits[part]);
@@ -104,8 +114,11 @@ var dollMaker = function($scope, $http, $element, $q, ORIGIN_W, ORIGIN_H, IMAGE_
 
     $scope.ctx = $element.find("canvas")[0].getContext("2d");
 
+    $scope.drawnBits = {};
+    $scope.savedImages = {};
+
     $scope.drawLintling = function() {
-        var drawOrder = ["teeth", "ears", "coat", "whiskers", "paws", "eyes", "tail", "base"].reverse();
+        var drawOrder = ["watermark", "teeth", "ears", "coat", "whiskers", "paws", "eyes", "tail", "base"].reverse();
 
         var getImage = function(url) {
             var img = new Image();
@@ -125,30 +138,33 @@ var dollMaker = function($scope, $http, $element, $q, ORIGIN_W, ORIGIN_H, IMAGE_
             return promise.promise;
         }
 
-        var images = {};
         var promises = [];
         for (var part in $scope.selectedBits) {
-            if ($scope.selectedBits[part] != "" && $scope.selectedBits[part] != undefined) {
+            if ($scope.selectedBits[part] != "" && $scope.selectedBits[part] != undefined && $scope.selectedBits[part] != $scope.drawnBits[part]) {
                 var promise = getImage($scope.selectedBits[part]);
                 promise.then((function(part) {
                     return function(img) {
-                        images[part] = img;
+                        $scope.savedImages[part] = img;
                     };
                 })(part));
                 promises.push(promise);
+            }
+            if ($scope.selectedBits[part] == "" || $scope.selectedBits[part] == undefined) {
+                $scope.savedImages[part] = null;
             }
         }
         $q.all(promises).then(function() {
             $scope.ctx.clearRect(0, 0, IMAGE_SCALE * ORIGIN_W, IMAGE_SCALE * ORIGIN_H);
             for (var k in drawOrder) {
-                if (drawOrder[k] in images) {
-                    $scope.ctx.drawImage(images[drawOrder[k]], 0, 0, IMAGE_SCALE * ORIGIN_W, IMAGE_SCALE * ORIGIN_H);
+                if (drawOrder[k] in $scope.savedImages && $scope.savedImages[drawOrder[k]] != null) {
+                    $scope.ctx.drawImage($scope.savedImages[drawOrder[k]], 0, 0, IMAGE_SCALE * ORIGIN_W, IMAGE_SCALE * ORIGIN_H);
                 }
             }
-            $scope.ctx.font = "15px Arial";
-            $scope.ctx.fillText("Lintling Creator - CloverCoin.DeviantArt.com", 30, IMAGE_SCALE * ORIGIN_H - 40);
+            $scope.drawnBits = angular.copy($scope.selectedBits);
         });
     }
+
+    $scope.$watch(function() { return $scope.selectedBits; }, $scope.drawLintling, true);
 };
 
 angular.module('lintling-christmas')
