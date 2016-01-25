@@ -17,6 +17,8 @@
             </select>
         </div>
         <br />
+        <input ng-disabled="!hasSavedDesign" type="button" ng-click="loadDesign()" value="Load Saved Design" />
+        <input type="button" ng-click="saveDesign()" value="Save Design (Local)" />
 	</div>
 </body>
 </html>
