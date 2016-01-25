@@ -1,5 +1,5 @@
 var dollMaker = function($scope, $http, $element, $q, ORIGIN_W, ORIGIN_H, IMAGE_BASE, IMAGE_SCALE) {
-    $http.get('/assets/json/parts.json').success(function(data) {
+    $http.get('./assets/json/parts.json').success(function(data) {
         var parts = {};
         for (var i in data) {
             parts[i] = [];
@@ -13,13 +13,12 @@ var dollMaker = function($scope, $http, $element, $q, ORIGIN_W, ORIGIN_H, IMAGE_
             }
         }
         $scope.parts = parts;
-        console.log(parts);
     });
 
     $scope.selectedBits = {
-        watermark: "/assets/image/watermark/watermark.png", 
-        base: "/assets/image/base/base.png", 
-        paws:"", 
+        watermark: IMAGE_BASE + "watermark/watermark.png", 
+        base: IMAGE_BASE + "base/base.png", 
+        paws: "", 
         eyes: "", 
         teeth: "", 
         tail: "", 
@@ -27,10 +26,6 @@ var dollMaker = function($scope, $http, $element, $q, ORIGIN_W, ORIGIN_H, IMAGE_
         ears: "", 
         whiskers: ""
     };
-
-    $scope.partChange = function(part) {
-        console.log(part + ": " + $scope.selectedBits[part]);
-    }
 
     $scope.ctx = $element.find("canvas")[0].getContext("2d");
 
@@ -82,9 +77,25 @@ var dollMaker = function($scope, $http, $element, $q, ORIGIN_W, ORIGIN_H, IMAGE_
             }
             $scope.drawnBits = angular.copy($scope.selectedBits);
         });
+    };
+
+    $scope.saveDesign = function() {
+        $scope.savedDesign = $scope.selectedBits;
+        localStorage.setItem("savedLintling", JSON.stringify($scope.savedDesign));
+        $scope.hasSavedDesign = true;
+    };
+
+    $scope.loadDesign = function() {
+        angular.extend($scope.selectedBits, JSON.parse(localStorage.getItem("savedLintling")));
     }
 
     $scope.$watch(function() { return $scope.selectedBits; }, $scope.drawLintling, true);
+
+    $scope.hasSavedDesign = false;
+    $scope.savedDesign = JSON.parse(localStorage.getItem("savedLintling"));
+    if ($scope.savedDesign != null) {
+        $scope.hasSavedDesign = true;
+    }
 };
 
 angular.module('lintling-christmas')
