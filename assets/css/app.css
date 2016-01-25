@@ -3,7 +3,7 @@ select {
      -moz-appearance: none;
           appearance: none;
   background-color: white;
-  background-image: url("./assets/image/caret--down-15.png");
+  background-image: url("../image/caret--down-15.png");
   background-position: right;
   background-repeat: no-repeat;
   border-color: #cccccc;
