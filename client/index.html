@@ -11,13 +11,12 @@
 	<div ng-controller="dollmaker">
         <canvas id="canvas" width="613" height="570" style="float:left"></canvas>
         <div ng-repeat="(part, pairList) in parts">
-            <select ng-change="partChange(part)" ng-model="selectedBits[part]">
+            <select ng-model="selectedBits[part]">
                 <option value="">{{part|capitalize}}</option>
                 <option ng-repeat="pair in pairList" value="{{pair.url}}">{{pair.name}}</option>
             </select>
         </div>
         <br />
-        <input type="button" ng-click="drawLintling()" value="Draw" />
 	</div>
 </body>
 </html>
